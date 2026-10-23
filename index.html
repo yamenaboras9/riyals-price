@@ -103,8 +103,17 @@ $('copy').addEventListener('click',async()=>{
  catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();$('copy').textContent='تم النسخ';setTimeout(()=>$('copy').textContent='نسخ النتائج',1400)}
 });
 $('reset').addEventListener('click',()=>{Object.entries(defaults).forEach(([k,v])=>{if(typeof v==='number'&&$(k))$(k).value=v});$('rate').value=defaults.rate;$('expense').value=defaults.expense;$('original').value=defaults.original;$('discounted').value=defaults.discounted;marginIds.forEach(id=>$(id).value=defaults[id]);calculate()});
-try{const s=JSON.parse(localStorage.getItem('riyalsPriceSettings')||'null');if(s){['rate','expense',...marginIds].forEach(id=>{if(s[id]!==undefined)$(id).value=s[id]})}}catch(e){}
-calculate();
+try{const s=Jtry {
+  const s = JSON.parse(localStorage.getItem('riyalsPriceSettings') || 'null');
+  if (s) {
+    ['rate', 'expense', ...marginIds].forEach(id => {
+      if (s[id] !== undefined) $(id).value = s[id];
+    });
+    if (Number(s.expense) === 10) {
+      $('expense').value = 38000;
+    }
+  }
+} catch (e) {}
 if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body></html>
