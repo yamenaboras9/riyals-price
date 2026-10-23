@@ -40,7 +40,7 @@ button{border:0;border-radius:12px;padding:12px 14px;font:inherit;font-weight:65
   <h2>إعدادات الحساب</h2>
   <div class="grid">
     <div class="field"><label for="rate">سعر الصرف (ليرة لكل ريال)</label><input id="rate" type="number" min="0.0001" step="any" value="3800"></div>
-    <div class="field"><label for="expense">المصاريف (بالريال)</label><input id="expense" type="number" min="0" step="any" value="10"></div>
+    <div class="field"><label for="expense">المصاريف (بالليرة السورية)</label><input id="expense" type="number" min="0" step="any" value="38000"></div>
   </div>
   <h2 style="margin-top:16px">نسب الربح (%)</h2>
   <div class="grid">
@@ -63,13 +63,13 @@ button{border:0;border-radius:12px;padding:12px 14px;font:inherit;font-weight:65
   <div class="sectionhead"><h2>النتائج</h2><span class="small">بالليرة السورية</span></div>
   <div id="results"></div>
   <div class="actions"><button class="primary" id="copy">نسخ النتائج</button><button class="secondary" id="reset">إعادة القيم الافتراضية</button></div>
-  <p class="note">المعادلة: (سعر المنتج بالريال × سعر الصرف) + (المصاريف بالريال × سعر الصرف) + نسبة الربح. الأسعار الناتجة تقديرية حسب القيم التي تدخلها.</p>
+  <p class="note">المعادلة: (سعر المنتج بالريال × سعر الصرف) + المصاريف بالليرة السورية + نسبة الربح من قيمة المنتج الأساسية بالليرة. الأسعار الناتجة تقديرية حسب القيم التي تدخلها.</p>
 </section>
 <footer class="note">تعمل الحاسبة محليًا على الجهاز ولا تحتاج إلى حساب أو اتصال بالإنترنت بعد فتحها أول مرة.</footer>
 </main>
 <script>
 const $=id=>document.getElementById(id);
-const defaults={rate:3800,expense:10,original:36,discounted:31,m50:50,m40:40,m30:30,m20:20,m10:10};
+const defaults={rate:3800,expense:38000,original:36,discounted:31,m50:50,m40:40,m30:30,m20:20,m10:10};
 const marginIds=['m50','m40','m30','m20','m10'];
 function getMargins(){return marginIds.map(id=>num(id)).concat([0])}
 function marginName(p){return p===0?'دون ربح':'ربح '+fmt(p)+'%'}
@@ -82,13 +82,13 @@ function calculate(){
  const margins=getMargins();
  results.innerHTML='';
  rows.forEach(([title,sar])=>{
-   const base=sar*rate, costs=expense*rate;
+   const base=sar*rate;
    const heading=document.createElement('div');heading.className='result';
    heading.innerHTML='<div class="rlabel"><strong>'+title+'</strong><div class="small">'+fmt(sar)+' ريال · قبل المصاريف والربح</div></div><div class="value">'+fmt(base)+'</div>';
    results.appendChild(heading);
    margins.forEach((margin,i)=>{
      const name=marginName(margin);
-     const total=base+(base*margin/100)+costs;
+     const total=base+(base*margin/100)+expense;
      const row=document.createElement('div');row.className='result';
      row.innerHTML='<div class="rlabel">'+name+(i===0?'<span class="pill">الهامش الأول</span>':'')+'</div><div class="value">'+fmt(total)+'</div>';
      results.appendChild(row);
