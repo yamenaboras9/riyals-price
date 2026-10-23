@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="حاسبة الأسعار">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="description" content="حاسبة أسعار المنتجات بالريال السعودي والليرة السورية">
+<link rel="manifest" href="manifest.json">
+<title>حاسبة الأسعار</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;color:#14212b;background:#f4f7f8}
+*{box-sizing:border-box}body{margin:0;padding:16px 12px 28px}
+main{max-width:720px;margin:auto}.hero{background:#0f766e;color:white;padding:20px;border-radius:20px;margin-bottom:14px}
+h1{font-size:24px;margin:0 0 6px}.sub{opacity:.9;font-size:14px}
+.card{background:#fff;border:1px solid #e1e8eb;border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 4px 16px #18313c0a}
+h2{font-size:18px;margin:0 0 14px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{display:block;font-size:13px;color:#53636d;margin-bottom:6px}
+input{width:100%;font:inherit;font-size:17px;padding:12px;border:1px solid #cbd5db;border-radius:12px;background:#fff;color:#14212b}
+input:focus{outline:2px solid #5eead4;border-color:#0f766e}
+.field{min-width:0}.wide{grid-column:1/-1}
+.result{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid #edf1f2}
+.result:last-child{border-bottom:0}.rlabel{font-size:14px;color:#465761}.value{font-weight:750;font-size:17px;text-align:left;direction:ltr;white-space:nowrap}
+.pill{font-size:12px;background:#e6f7f4;color:#0f766e;border-radius:999px;padding:4px 8px;margin-inline-start:6px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+button{border:0;border-radius:12px;padding:12px 14px;font:inherit;font-weight:650;cursor:pointer}
+.primary{background:#0f766e;color:white}.secondary{background:#e8eff1;color:#24343c}
+.note{font-size:12px;color:#657680;line-height:1.7}.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.small{font-size:12px;color:#667780}
+@media(max-width:390px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.value{font-size:15px}}
+</style>
+</head>
+<body>
+<main>
+<header class="hero"><h1>حاسبة الأسعار</h1><div class="sub">أدخل السعر بالريال السعودي واحصل على الأسعار المحسوبة بالليرة السورية.</div></header>
+<section class="card">
+  <h2>إعدادات الحساب</h2>
+  <div class="grid">
+    <div class="field"><label for="rate">سعر الصرف (ليرة لكل ريال)</label><input id="rate" type="number" min="0.0001" step="any" value="3800"></div>
+    <div class="field"><label for="expense">المصاريف (بالريال)</label><input id="expense" type="number" min="0" step="any" value="10"></div>
+  </div>
+  <h2 style="margin-top:16px">نسب الربح (%)</h2>
+  <div class="grid">
+    <div class="field"><label for="m50">الهامش الأول</label><input id="m50" type="number" min="0" step="any" value="50"></div>
+    <div class="field"><label for="m40">الهامش الثاني</label><input id="m40" type="number" min="0" step="any" value="40"></div>
+    <div class="field"><label for="m30">الهامش الثالث</label><input id="m30" type="number" min="0" step="any" value="30"></div>
+    <div class="field"><label for="m20">الهامش الرابع</label><input id="m20" type="number" min="0" step="any" value="20"></div>
+    <div class="field"><label for="m10">الهامش الخامس</label><input id="m10" type="number" min="0" step="any" value="10"></div>
+  </div>
+  <p class="note">غيّر سعر الصرف والمصاريف ونسب الربح حسب الحاجة. تُحفظ الإعدادات على هذا الجهاز تلقائيًا.</p>
+</section>
+<section class="card">
+  <h2>أسعار المنتج</h2>
+  <div class="grid">
+    <div class="field"><label for="original">السعر الأساسي (ريال)</label><input id="original" type="number" min="0" step="any" value="36"></div>
+    <div class="field"><label for="discounted">السعر بعد الخصم (ريال)</label><input id="discounted" type="number" min="0" step="any" value="31"></div>
+  </div>
+</section>
+<section class="card">
+  <div class="sectionhead"><h2>النتائج</h2><span class="small">بالليرة السورية</span></div>
+  <div id="results"></div>
+  <div class="actions"><button class="primary" id="copy">نسخ النتائج</button><button class="secondary" id="reset">إعادة القيم الافتراضية</button></div>
+  <p class="note">المعادلة: (سعر المنتج بالريال × سعر الصرف) + (المصاريف بالريال × سعر الصرف) + نسبة الربح. الأسعار الناتجة تقديرية حسب القيم التي تدخلها.</p>
+</section>
+<footer class="note">تعمل الحاسبة محليًا على الجهاز ولا تحتاج إلى حساب أو اتصال بالإنترنت بعد فتحها أول مرة.</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const defaults={rate:3800,expense:10,original:36,discounted:31,m50:50,m40:40,m30:30,m20:20,m10:10};
+const marginIds=['m50','m40','m30','m20','m10'];
+function getMargins(){return marginIds.map(id=>num(id)).concat([0])}
+function marginName(p){return p===0?'دون ربح':'ربح '+fmt(p)+'%'}
+function num(id){const n=Number($(id).value);return Number.isFinite(n)&&n>=0?n:0}
+function fmt(n){return new Intl.NumberFormat('ar-SA',{maximumFractionDigits:2}).format(n)}
+function save(){try{const data={};['rate','expense',...marginIds].forEach(id=>data[id]=$(id).value);localStorage.setItem('riyalsPriceSettings',JSON.stringify(data))}catch(e){}}
+function calculate(){
+ const rate=num('rate'), expense=num('expense'), results=$('results');
+ const rows=[['السعر الأساسي',num('original')],['السعر بعد الخصم',num('discounted')]];
+ const margins=getMargins();
+ results.innerHTML='';
+ rows.forEach(([title,sar])=>{
+   const base=sar*rate, costs=expense*rate;
+   const heading=document.createElement('div');heading.className='result';
+   heading.innerHTML='<div class="rlabel"><strong>'+title+'</strong><div class="small">'+fmt(sar)+' ريال · قبل المصاريف والربح</div></div><div class="value">'+fmt(base)+'</div>';
+   results.appendChild(heading);
+   margins.forEach((margin,i)=>{
+     const name=marginName(margin);
+     const total=base+(base*margin/100)+costs;
+     const row=document.createElement('div');row.className='result';
+     row.innerHTML='<div class="rlabel">'+name+(i===0?'<span class="pill">الهامش الأول</span>':'')+'</div><div class="value">'+fmt(total)+'</div>';
+     results.appendChild(row);
+   });
+ });
+ save();
+}
+['rate','expense','original','discounted','m50','m40','m30','m20','m10'].forEach(id=>$(id).addEventListener('input',calculate));
+$('copy').addEventListener('click',async()=>{
+ const text=$('results').innerText;
+ try{await navigator.clipboard.writeText(text);$('copy').textContent='تم النسخ';setTimeout(()=>$('copy').textContent='نسخ النتائج',1400)}
+ catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();$('copy').textContent='تم النسخ';setTimeout(()=>$('copy').textContent='نسخ النتائج',1400)}
+});
+$('reset').addEventListener('click',()=>{Object.entries(defaults).forEach(([k,v])=>{if(typeof v==='number'&&$(k))$(k).value=v});$('rate').value=defaults.rate;$('expense').value=defaults.expense;$('original').value=defaults.original;$('discounted').value=defaults.discounted;marginIds.forEach(id=>$(id).value=defaults[id]);calculate()});
+try{const s=JSON.parse(localStorage.getItem('riyalsPriceSettings')||'null');if(s){['rate','expense',...marginIds].forEach(id=>{if(s[id]!==undefined)$(id).value=s[id]})}}catch(e){}
+calculate();
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body></html>
